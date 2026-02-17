@@ -9,5 +9,8 @@ wheels/
 # Virtual environments
 .venv
 
-# Data 
+# Data
 eeg-data
+
+notebooks/*
+notebooks/kaggle-uoe-final-year-project.ipynb
