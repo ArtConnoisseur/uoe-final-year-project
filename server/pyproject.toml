@@ -5,6 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "fastapi>=0.129.0",
+    "fastapi-cli>=0.0.23",
+    "gpiod==1.5.4",
     "h5py>=3.15.1",
     "matplotlib>=3.10.7",
     "mne>=1.10.2",
@@ -12,6 +15,9 @@ dependencies = [
     "numpy>=2.3.4",
     "pandas>=2.3.3",
     "pyedflib>=0.1.42",
+    "scipy>=1.16.3",
+    "spidev>=3.8",
+    "websockets>=16.0",
 ]
 
 [dependency-groups]
