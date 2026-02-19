@@ -1,0 +1,42 @@
+export function useTheme() {
+    const styles = getComputedStyle(document.documentElement);
+    const get = (v) => styles.getPropertyValue(v).trim();
+
+    return {
+        background: get("--background"),
+        foreground: get("--foreground"),
+        card: get("--card"),
+        cardForeground: get("--card-foreground"),
+        popover: get("--popover"),
+        popoverForeground: get("--popover-foreground"),
+        primary: get("--primary"),
+        primaryForeground: get("--primary-foreground"),
+        secondary: get("--secondary"),
+        secondaryForeground: get("--secondary-foreground"),
+        muted: get("--muted"),
+        mutedForeground: get("--muted-foreground"),
+        accent: get("--accent"),
+        accentForeground: get("--accent-foreground"),
+        destructive: get("--destructive"),
+        border: get("--border"),
+        input: get("--input"),
+        ring: get("--ring"),
+        chart1: get("--chart-1"),
+        chart2: get("--chart-2"),
+        chart3: get("--chart-3"),
+        chart4: get("--chart-4"),
+        chart5: get("--chart-5"),
+        sidebar: get("--sidebar"),
+        sidebarForeground: get("--sidebar-foreground"),
+        sidebarPrimary: get("--sidebar-primary"),
+        sidebarPrimaryForeground: get("--sidebar-primary-foreground"),
+        sidebarAccent: get("--sidebar-accent"),
+        sidebarAccentForeground: get("--sidebar-accent-foreground"),
+        sidebarBorder: get("--sidebar-border"),
+        sidebarRing: get("--sidebar-ring"),
+        radiusSm: get("--radius-sm"),
+        radiusMd: get("--radius-md"),
+        radiusLg: get("--radius-lg"),
+        radiusXl: get("--radius-xl"),
+    };
+}
