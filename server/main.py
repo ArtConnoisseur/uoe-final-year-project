@@ -1,5 +1,7 @@
-def main():
-    print("Hello from final-year-project-code!")
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
+from services.eeg import EEGReader
 
-if __name__ == "__main__":
-    main()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    with
