@@ -172,23 +172,20 @@ class EEGReader:
         Returns a list of 16 µV floats (channels 1-16),
         or None if the frame header is invalid.
         """
-        output   = self.spi.readbytes(27)
+        output = self.spi.readbytes(27)
+
+        if (output[0] == 192 and output[1] == 0 and output[2] == 8):
+            self._parse_frame(output, self.result);
+
         self.cs_line.set_value(0)
         output_2 = self.spi_2.readbytes(27)
         self.cs_line.set_value(1)
 
-        if not (output_2[0] == 192 and output_2[1] == 0 and output_2[2] == 8):
-            return None
+        if (output_2[0] == 192 and output_2[1] == 0 and output_2[2] == 8):
+            self._parse_frame(output_2, self.result_2)
 
-        self._parse_frame(output,   self.result)
-        self._parse_frame(output_2, self.result_2)
+            return self.result[1:9] + self.result_2[1:9]
 
-        return [
-            self.result[1],   self.result[2],   self.result[3],   self.result[4],
-            self.result[5],   self.result[6],   self.result[7],   self.result[8],
-            self.result_2[1], self.result_2[2], self.result_2[3], self.result_2[4],
-            self.result_2[5], self.result_2[6], self.result_2[7], self.result_2[8],
-        ]
 
     def close(self):
         self.spi.close()

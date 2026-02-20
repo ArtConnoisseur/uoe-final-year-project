@@ -340,8 +340,6 @@ while 1:
 
 
             if len(data_9ch_test)==sample_len:
-
-
                 data_after_1 = data_1ch_test
                 dataset_1 =  data_before_1 + data_after_1
                 data_before_1 = dataset_1[250:]
