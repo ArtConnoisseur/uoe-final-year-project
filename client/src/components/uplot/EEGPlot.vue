@@ -5,10 +5,10 @@ import { useColorMode } from "@vueuse/core";
 import uPlot from "uplot";
 import "uplot/dist/uPlot.min.css";
 
-const props = defineProps(["ch", "pn"]);
+const props = defineProps(["ch", "pn", "timestamps", "samples"]);
 const channelName = ref(props.ch);
 
-const SAMPLE_RATE = 160; // Hz
+const SAMPLE_RATE = 60; // Hz
 const WINDOW_LENGTH = 5; // Seconds
 
 // Calculate how many points there should at any given
@@ -33,21 +33,19 @@ function EEGValue(time) {
 
 const data = [[], []];
 
-function addSample() {
-    time += 1 / SAMPLE_RATE;
-
-    if (data[0].length >= DATA_POINTS) {
-        data[0].shift();
-        data[1].shift();
-    }
-
-    data[0].push(time);
-    data[1].push(EEGValue(time));
-
-    uplot.setData(data);
-
-    animFrame = requestAnimationFrame(addSample);
-}
+watch(
+    () => [props.timestamps, props.samples],
+    ([newTimestamps, newSamples]) => {
+        if (!uplot) {
+            console.error("uplot is not initialised");
+            return;
+        }
+        newTimestamps = Array.from(newTimestamps);
+        newSamples = Array.from(newSamples);
+        uplot.setData([newTimestamps, newSamples]);
+    },
+    { deep: true },
+);
 
 function buildChart() {
     const theme = useTheme();
@@ -88,7 +86,7 @@ function buildChart() {
         series: [
             {},
             {
-                label: "CH1",
+                label: props.ch,
                 stroke: theme.foreground,
                 width: 1.5,
             },
@@ -100,24 +98,23 @@ function buildChart() {
 
 onMounted(() => {
     buildChart(uplot);
-    animFrame = requestAnimationFrame(addSample);
 });
 
 onBeforeUnmount(() => {
-    cancelAnimationFrame(animFrame);
-    uplot?.destroy;
+    uplot?.destroy();
 });
 </script>
 
 <template>
-    <div class="py-8 flex flex-col gap-4">
+    <div class="py-8 flex flex-col gap-4 w-[80%]">
         <span>
             <span>Channel Name: {{ channelName }}</span>
             <span class="pl-3">Pin ID: {{ props.pn }}</span>
         </span>
         <div
             ref="chartElement"
-            class="w-full h-[200px] border-[var(--border)] border-2 rounded-md"
+            class="w-full h-[350px] border-[var(--border)] border-2 rounded-md"
         ></div>
     </div>
+    <span class="w-full border-b-1"></span>
 </template>

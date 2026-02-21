@@ -1,23 +1,53 @@
 <script setup>
 import { EEGPlot } from "@/components/uplot";
+import { onMounted, reactive } from "vue";
 
 const CHANNELS = 16;
+
+const SAMPLES = 50;
+
+const channels = reactive({
+    timestamps: [],
+    samples: Array.from({ length: 16 }, (_, i) => []),
+});
+
+onMounted(() => {
+    const socket = new WebSocket("ws://10.177.74.21:8000/eeg-ws");
+
+    socket.addEventListener("open", (event) => {
+        socket.send("Hello Server");
+    });
+
+    socket.addEventListener("message", (event) => {
+        const { timestamp, sample } = JSON.parse(event.data);
+        channels.timestamps.push(timestamp);
+        sample.forEach((val, i) => channels.samples[i].push(val));
+
+        // Sliding window
+        if (channels.timestamps.length > SAMPLES) {
+            channels.timestamps.shift();
+            channels.samples.forEach((ch) => ch.shift());
+        }
+    });
+});
 </script>
 
 <template>
-    <main class="flex flex-1 px-[4%] gap-[4%] min-h-0 relative">
-        <section class="flex flex-col w-[70%] divide-y-1 overflow-y-auto">
+    <main class="flex flex-1 relative">
+        <section
+            class="flex flex-col w-[70%] overflow-y-auto justify-center items-center"
+        >
             <EEGPlot
-                v-for="idx in Array.from(
-                    { length: CHANNELS },
-                    (_, idx) => idx + 1,
-                )"
+                v-for="(sample, idx) in channels.samples"
                 :ch="idx"
-                pn="P19"
+                :samples="channels.samples[idx]"
+                :timestamps="channels.timestamps"
             />
         </section>
-        <section class="flex flex-col border-l-1 p-12 h-full sticky inset-0">
-            <h3 class="text-2xl font-bold">Control Panel</h3>
+        <section class="flex flex-col border-l relative">
+            <div class="sticky top-30 px-10">
+                <h3 class="text-2xl font-bold">Control Panel</h3>
+            </div>
         </section>
     </main>
 </template>
