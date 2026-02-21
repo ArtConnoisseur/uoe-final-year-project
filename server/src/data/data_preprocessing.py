@@ -5,7 +5,8 @@
 # of Edinburgh.
 
 # This file is essentially used to maintain the
-# code for the preprocessing of the EEG data 
+# code for the preprocessing of the EEG data
 
 # =============================================
 
+import mne
