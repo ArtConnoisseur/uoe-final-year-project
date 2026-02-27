@@ -12,5 +12,7 @@ wheels/
 # Data
 eeg-data
 
+/server/notebooks
+/server/notebooks*
 notebooks/*
 notebooks/kaggle-uoe-final-year-project.ipynb

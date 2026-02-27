@@ -1,15 +1,30 @@
-// Folder-specific settings
-//
-// For a full list of overridable settings, and general information on folder-specific settings,
-// see the documentation: https://zed.dev/docs/configuring-zed#settings-files
 {
-    "lsp": {
-        "pyright": {
-            "settings": {
-                "python": {
-                    "pythonPath": "server/.venv/bin/python"
-                }
-            }
-        }
-    }
+  "lsp": {
+    "basedpyright": {
+      "settings": {
+        "python": {
+          "pythonPath": "server/.venv/bin/python",
+        },
+        "basedpyright": {
+          "analysis": {
+            // This disables all type checking while keeping "Go to Definition"
+            "typeCheckingMode": "off",
+          },
+        },
+      },
+    },
+  },
+  "languages": {
+    "Python": {
+      "code_actions_on_format": {
+        "source.organizeImports.ruff": true,
+      },
+      "formatter": {
+        "language_server": {
+          "name": "ruff",
+        },
+      },
+      "language_servers": ["!basedpyright", "ruff", "pyright"],
+    },
+  },
 }
