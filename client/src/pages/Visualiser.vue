@@ -1,9 +1,9 @@
 <script setup>
 import { EEGPlot } from "@/components/uplot";
 import { onMounted, reactive } from "vue";
+import PinConfig from "@/components/pin-config/PinConfig.vue";
 
 const CHANNELS = 16;
-
 const SAMPLES = 50;
 
 const channels = reactive({
@@ -33,20 +33,21 @@ onMounted(() => {
 </script>
 
 <template>
-    <main class="flex flex-1 relative">
+    <main class="flex flex-1 visualiser-container h-0 min-h-0">
         <section
             class="flex flex-col w-[70%] overflow-y-auto justify-center items-center"
         >
             <EEGPlot
                 v-for="(sample, idx) in channels.samples"
                 :ch="idx"
-                :samples="channels.samples[idx]"
+                :samples="sample"
                 :timestamps="channels.timestamps"
             />
         </section>
-        <section class="flex flex-col border-l relative">
-            <div class="sticky top-30 px-10">
+        <section class="flex flex-col border-l w-[30%] overflow-y-auto">
+            <div class="px-10 py-12 flex flex-col gap-10">
                 <h3 class="text-2xl font-bold">Control Panel</h3>
+                <PinConfig/>
             </div>
         </section>
     </main>

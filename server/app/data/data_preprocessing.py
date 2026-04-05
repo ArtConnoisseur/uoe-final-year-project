@@ -13,6 +13,8 @@ import os
 
 import mne
 from mne.preprocessing import ICA
+import torch
+import numpy as np
 
 
 class EEGPreprocessing:
@@ -34,6 +36,9 @@ class EEGPreprocessing:
         self.raw = raw
         self._is_loaded = True
         return raw
+    
+    def _resample(self):
+        self.raw.resample(128, npad="auto")
 
     def _apply_notch_and_bandpass(self):
         raw = self.raw.load_data()
@@ -119,6 +124,7 @@ class EEGPreprocessing:
             )
 
         self._load_file(patient, trial)
+        self._resample()
         self._apply_notch_and_bandpass()
         self._fit_ica(n_components=n_components, random_seed=random_seed)
         self._exclude_ica_components(exclude_components)
@@ -149,9 +155,53 @@ class EEGPreprocessing:
             print(f"Saved S{patient:03} R{trial:02} to {self.save_data_path}")
 
 
+class EEGTransforms:
+    def __init__(self):
+        self.root_dir = r"eeg-data/processed"
+        self.freq_dir = r"eeg-data/processed_fft"
+        self.imag_dir = r"eeg-data/processed_wvt"
+        os.makedirs(self.freq_dir, exist_ok=True)
+        os.makedirs(self.imag_dir, exist_ok=True)
+        self.freq_bins = np.arange(0.5, 40, 2)
+
+    def _get_patient_filepath(self, patient, trial):
+        return rf"{self.root_dir}/S{patient:03}/S{patient:03}R{trial:02}_epo.fif"
+
+    def _get_save_filepath(self, save_dir, patient, trial):
+        patient_dir = os.path.join(save_dir, f"S{patient:03}")
+        os.makedirs(patient_dir, exist_ok=True)
+        return rf"{patient_dir}/S{patient:03}R{trial:02}.pt"
+
+    def process_all_files(self):
+        for patient in range(1, 110):
+            for trial in range(3, 15):
+                src_path  = self._get_patient_filepath(patient, trial)
+                freq_path = self._get_save_filepath(self.freq_dir, patient, trial)
+                imag_path = self._get_save_filepath(self.imag_dir, patient, trial)
+
+                if os.path.exists(freq_path) and os.path.exists(imag_path):
+                    continue
+
+                epochs = mne.read_epochs(src_path, preload=True, verbose=False)
+                epochs.resample(128, npad="auto", verbose=False)
+
+                X_freq = torch.tensor(
+                    mne.time_frequency.psd_array_welch(
+                        epochs.get_data(), sfreq=epochs.info["sfreq"], verbose=False)[0],
+                    dtype=torch.float32
+                )
+
+                X_image = torch.tensor(
+                    epochs.compute_tfr(method="morlet", freqs=self.freq_bins,
+                        n_cycles=self.freq_bins/2, verbose=False).data,
+                    dtype=torch.float32
+                ).mean(dim=1)
+
+                torch.save(X_freq,  freq_path)
+                torch.save(X_image, imag_path)
+                print(f"Saved S{patient:03}R{trial:02}")
+
+
 if __name__ == "__main__":
-    eeg_processor = EEGPreprocessing()
-    full_file_list = [
-        (patient, trial) for patient in range(1, 110) for trial in range(3, 15)
-    ]
-    eeg_processor.process_batch(full_file_list, 15, [0, 1, 2, 3], 42)
+    transformer = EEGTransforms()
+    transformer.process_all_files()
