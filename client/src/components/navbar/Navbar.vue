@@ -11,9 +11,9 @@ import Navitem from "./NavbarItem.vue";
             <RouterLink to="/">PiEEG-16 Visualiser</RouterLink>
         </span>
         <ul class="mr-auto flex flex-row items-center gap-10">
-            <Navitem to="/about">About</Navitem>
-            <Navitem to="/record">Record EEGs</Navitem>
             <Navitem to="/visualiser">Visualiser</Navitem>
+            <Navitem to="/record">Record EEGs</Navitem>
+            <Navitem to="/about">Cursor</Navitem>
         </ul>
         <ModeToggle />
     </nav>

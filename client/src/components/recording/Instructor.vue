@@ -1,17 +1,16 @@
 <script setup>
-import { Proportions, ProportionsIcon } from 'lucide-vue-next';
-
 const props = defineProps([
     "command",
-    "icon"
+    "icon",
+    "isActive"
 ]);
 
 const Icon = props.icon; 
 </script>
 
 <template>
-    <div class="h-full w-[33.33%] border-dashed flex flex-col gap-2 items-center justify-center hover:bg-green-400">
-        <Icon class="w-10 h-10"/>
-        <spand>{{ props.command }}</spand>
+    <div :class="`h-full w-[33.33%] border-dashed flex flex-col gap-2 items-center justify-center ${isActive == 1 && 'border-green-400 border-2  bg-green-400/20'}`">
+        <Icon class="w-[20%] h-[20%]"/>
+        <span>{{ props.command }}</span>
     </div>
 </template>

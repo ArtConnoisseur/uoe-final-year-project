@@ -4,6 +4,11 @@
 // Definition of new pin mappings is handled by the server which is
 // why you cannot see it here.
 
+// Why is this file commented and not the others? 
+// This is literally just a bunch of definitions, that needs context.
+// Code is relatively self explanatory given the variable names. 
+// I'm speedrunning this leave me alone. 
+
 import { defineStore } from "pinia";
 
 // Default pin labels. ToDo: Complete
@@ -26,3 +31,33 @@ export const usePinConfig = defineStore("pinConfig", {
     }
 });
 
+// Trial configuration 
+
+export function createTrailObject( command, duration ) { 
+    return { command, duration }
+}
+
+const leftRightTrial = [
+    createTrailObject("none", 4),
+    createTrailObject("left", 4),
+    createTrailObject("none", 4),
+    createTrailObject("right",4),
+];
+
+const upDownTrial = [
+    createTrailObject("none", 4),
+    createTrailObject("up", 4),
+    createTrailObject("none", 4),
+    createTrailObject("down", 4),
+];
+
+export function getLeftRightTrialsByDuration(duration) {
+    const numberOfTrails = Math.ceil(duration * 60 / 16)
+    return Array.from({ length: numberOfTrails }, () => [...leftRightTrial]).flat()
+}
+
+export function getUpDownTrialsByDuration( duration ) {
+    // Duration is in minutes 
+    const numberOfTrails = Math.ceil(duration * 60 / 16)
+    return Array.from({ length: numberOfTrails }, () => [...upDownTrial]).flat()
+}
