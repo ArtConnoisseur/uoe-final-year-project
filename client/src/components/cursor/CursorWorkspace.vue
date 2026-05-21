@@ -4,11 +4,11 @@ import { ref, onMounted, onUnmounted } from "vue";
 
 const activitySquare = defineModel("activitySquare");
 const activitySquareConfigs = {
-    left: Array.from({length: 3}, (_, i) => Array.from({ length: 3 }, (_, j) => Number(i === 1 && j === 0))), 
-    right: Array.from({length: 3}, (_, i) => Array.from({ length: 3 }, (_, j) => Number(i === 1 && j === 2))), 
-    up: Array.from({length: 3}, (_, i) => Array.from({ length: 3 }, (_, j) => Number(i === 0 && j === 1))), 
-    down: Array.from({length: 3}, (_, i) => Array.from({ length: 3 }, (_, j) => Number(i === 2 && j === 1))),
-    none: Array.from({length: 3}, (_, i) => Array.from({ length: 3 }, (_, j) => Number((i + j) % 2 === 0))), 
+    left:   Array.from({length: 3}, (_, i) => Array.from({ length: 3 }, (_, j) => Number(i === 1 && j === 0))), 
+    right:  Array.from({length: 3}, (_, i) => Array.from({ length: 3 }, (_, j) => Number(i === 1 && j === 2))), 
+    up:     Array.from({length: 3}, (_, i) => Array.from({ length: 3 }, (_, j) => Number(i === 0 && j === 1))), 
+    down:   Array.from({length: 3}, (_, i) => Array.from({ length: 3 }, (_, j) => Number(i === 2 && j === 1))),
+    none:   Array.from({length: 3}, (_, i) => Array.from({ length: 3 }, (_, j) => Number((i + j) % 2 === 0))), 
 };
 
 const cursorContainer = ref(null); 

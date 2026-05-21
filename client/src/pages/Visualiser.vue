@@ -11,24 +11,45 @@ const channels = reactive({
     samples: Array.from({ length: 16 }, (_, i) => []),
 });
 
+let startTime = document.timeline.currentTime; // represents the flow of time push
+
+const updateValues = (timestep) => {
+    console.log(timestep);  
+    channels.timestamps.push(timestep - startTime);
+    channels.samples.forEach((ele, idx) => {
+        ele.push(Math.sin(idx * 180 * (timestep - startTime)/Math.PI))
+    })
+
+    if (channels.timestamps.length > SAMPLES) {
+        channels.timestamps.shift();
+        channels.samples.forEach((ch) => ch.shift());
+    }
+
+    requestAnimationFrame(updateValues);
+}
+
 onMounted(() => {
-    const socket = new WebSocket("ws://10.177.74.21:8000/eeg-ws");
+    // const socket = new WebSocket("ws://10.177.74.21:8000/eeg-ws");
 
-    socket.addEventListener("open", (event) => {
-        socket.send("Hello Server");
-    });
+    // socket.addEventListener("open", (event) => {
+    //     socket.send("Hello Server");
+    // });
 
-    socket.addEventListener("message", (event) => {
-        const { timestamp, sample } = JSON.parse(event.data);
-        channels.timestamps.push(timestamp);
-        sample.forEach((val, i) => channels.samples[i].push(val));
+    // socket.addEventListener("message", (event) => {
+    //     const { timestamp, sample } = JSON.parse(event.data);
+    //     channels.timestamps.push(timestamp);
+    //     sample.forEach((val, i) => channels.samples[i].push(val));
 
-        // Sliding window
-        if (channels.timestamps.length > SAMPLES) {
-            channels.timestamps.shift();
-            channels.samples.forEach((ch) => ch.shift());
-        }
-    });
+    //     // Sliding window
+    //     if (channels.timestamps.length > SAMPLES) {
+    //         channels.timestamps.shift();
+    //         channels.samples.forEach((ch) => ch.shift());
+    //     }
+    // });
+    
+    requestAnimationFrame(updateValues); 
+
+    console.log("hello")
 });
 </script>
 
